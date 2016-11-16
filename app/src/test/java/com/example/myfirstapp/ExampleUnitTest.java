@@ -1,4 +1,4 @@
-package com.example.matt.mapstest;
+package com.example.myfirstapp;
 
 import org.junit.Test;
 

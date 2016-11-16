@@ -1,7 +1,11 @@
-package com.example.matt.mapstest;
+package com.example.myfirstapp;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,7 +14,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.io.IOException;
+import java.util.List;
+
+public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -39,12 +46,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng ucd = new LatLng(53.308906, -6.224248);
-        mMap.addMarker(new MarkerOptions().position(ucd).title("Marker in UCD"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ucd));
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+        LatLng dublin = new LatLng(53.3498, 6.2603);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(dublin));
+        mMap.setMyLocationEnabled(true);
     }
 
+    public void onSearch(View view){
+        EditText location_tf = (EditText)findViewById(R.id.TFAddress);
+        String location = location_tf.getText().toString();
+        List<Address> addressList = null;
+        if(location != null || !location.equals("")){
+            Geocoder geocoder = new Geocoder(this);
+            try {
+               addressList = geocoder.getFromLocationName(location,1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
+
+    }
 }
