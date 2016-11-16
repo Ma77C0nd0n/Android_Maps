@@ -7,36 +7,39 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.myfirstapp.MainActivity">
 
     <Button
         android:text="Settings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/Bsettings"
         android:onClick="onButtonClick"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="109dp" />
-
-    <Button
-        android:text="Saved Locations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Bsavedlocations"
-        android:onClick="onSLClick"
-        android:layout_alignBottom="@+id/Bsettings"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="89dp" />
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/Bsavedlocations"
+        android:layout_marginTop="@dimen/cast_intro_overlay_button_margin_bottom" />
 
     <Button
         android:text="Open Map"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/Bsavedlocations"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="53dp"
         android:id="@+id/Bmap"
-        android:onClick="onMapButtonClick" />
+        android:onClick="onMapButtonClick"
+        android:layout_above="@+id/Bsavedlocations"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/cast_intro_overlay_button_margin_bottom" />
+
+    <Button
+        android:text="Saved Locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Bsavedlocations"
+        android:onClick="onSLClick"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+
+
 </RelativeLayout>
