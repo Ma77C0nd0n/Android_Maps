@@ -14,25 +14,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onButtonClick(View v){
-        if(v.getId()==R.id.Bsettings){
-            Intent i = new Intent(MainActivity.this,Settings.class);
-            startActivity(i);
+    public void onButtonClick(View v) {
+        Intent i;
+        if (v.getId() == R.id.Bsettings) {
+            i = new Intent(MainActivity.this, Settings.class);
+        } else if (v.getId() == R.id.Bsavedlocations) {
+            i = new Intent(MainActivity.this, SavedLocations.class);
+        } else if (v.getId() == R.id.Bmap) {
+            i = new Intent(MainActivity.this, Maps.class);
+        } else if (v.getId() == R.id.debug_alarm_button) {
+            i = new Intent(MainActivity.this, AlarmActivity.class);
+        } else {
+            i = null;
         }
+        startActivity(i);
     }
-    public void onSLClick(View v){
-        if(v.getId()==R.id.Bsavedlocations){
-            Intent i = new Intent(MainActivity.this,SavedLocations.class);
-            startActivity(i);
-        }
-    }
-
-    public void onMapButtonClick(View v){
-        if(v.getId()==R.id.Bmap){
-            Intent i = new Intent(MainActivity.this,Maps.class);
-            startActivity(i);
-        }
-    }
-
 
 }
