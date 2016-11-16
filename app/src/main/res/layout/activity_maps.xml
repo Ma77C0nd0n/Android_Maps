@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="Search"
             android:id="@+id/Bsearch"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:onClick="onSearch"
             android:layout_weight="0.61" />
 

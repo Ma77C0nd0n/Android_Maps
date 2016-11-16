@@ -32,7 +32,7 @@
         android:id="@+id/imageView"
         android:layout_weight="0.39"
         android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:alpha="20" />
+        android:alpha="20"
+        android:cropToPadding="false" />
 
 </LinearLayout>

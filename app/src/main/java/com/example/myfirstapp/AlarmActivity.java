@@ -5,6 +5,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 public class AlarmActivity extends AppCompatActivity {
 
@@ -20,9 +21,9 @@ public class AlarmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarm);
     }
 
-    public void killAlarm() {
+    public void killAlarm(View v) {
         this.ringtone.stop();
-        setContentView(R.layout.activity_main);
+        this.finish();
     }
 
 }
