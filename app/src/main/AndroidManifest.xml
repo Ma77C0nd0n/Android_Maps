@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SavedLocations" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,10 +41,11 @@
             android:name=".Settings"
             android:label="@string/title_activity_settings" />
         <activity
+            android:name=".SavedLocations"
+            android:label="@string/title_activity_locations"/>
+        <activity
             android:name=".AlarmActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_alarm" />
-
     </application>
-
 </manifest>
