@@ -1,11 +1,15 @@
 package com.example.myfirstapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -49,25 +53,43 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         LatLng dublin = new LatLng(53.3498, 6.2603);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(dublin));
-        mMap.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions
+                    (this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            Toast t = Toast.makeText
+                    (this.getApplicationContext(), "Restart app to accept permission change!", Toast.LENGTH_SHORT);
+            t.show();
+        }
+        else {
+            mMap.setMyLocationEnabled(true);
+        }
+        mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 
     public void onSearch(View view){
         EditText location_tf = (EditText)findViewById(R.id.TFAddress);
         String location = location_tf.getText().toString();
         List<Address> addressList = null;
-        if(location != null || !location.equals("")){
-            Geocoder geocoder = new Geocoder(this);
-            try {
-               addressList = geocoder.getFromLocationName(location,1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            addressList = geocoder.getFromLocationName(location,1);
             Address address = addressList.get(0);
             LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+            mMap.addMarker(new MarkerOptions().position(latLng).title(location));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        } catch (IOException e) {
+            Toast t = Toast.makeText
+                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
+            t.show();
+        } catch (Exception e) {
+            Toast t = Toast.makeText
+                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
+            t.show();
         }
 
     }
