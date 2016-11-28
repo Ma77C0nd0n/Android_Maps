@@ -1,14 +1,20 @@
 package com.example.myfirstapp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,10 +26,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private EditText location_tf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +41,21 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
+        this.location_tf = (EditText)findViewById(R.id.TFAddress);
+
+        location_tf.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    onSearch(v);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -49,30 +70,31 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng dublin = new LatLng(53.3498, 6.2603);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(dublin));
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions
-                    (this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            Toast t = Toast.makeText
-                    (this.getApplicationContext(), "Restart app to accept permission change!", Toast.LENGTH_SHORT);
-            t.show();
-        }
-        else {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
+
+        // Change this to user's location later
+        LatLng dublin = new LatLng(53.3498, 6.2603);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dublin, 18.0f));
+
         mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(latLng).title(
+                        ""+latLng.latitude+","+latLng.longitude
+                ));
+            }
+        });
     }
 
     public void onSearch(View view){
-        EditText location_tf = (EditText)findViewById(R.id.TFAddress);
+        hideKeyboard();
+        mMap.clear();
         String location = location_tf.getText().toString();
         List<Address> addressList = null;
         Geocoder geocoder = new Geocoder(this);
@@ -81,7 +103,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             Address address = addressList.get(0);
             LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
             mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,16.5f));
         } catch (IOException e) {
             Toast t = Toast.makeText
                     (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
@@ -92,5 +114,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             t.show();
         }
 
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm
+                = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 }
