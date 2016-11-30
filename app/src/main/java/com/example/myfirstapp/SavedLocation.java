@@ -9,14 +9,20 @@ import java.io.Serializable;
  */
 
 public class SavedLocation implements Serializable {
-    LatLng point;
+    private String name;
     double lat, lng;
-    String name;
 
     SavedLocation(LatLng point, String name){
-        this.point = point;
+        lat = point.latitude;
+        lng = point.longitude;
         this.name = name;
+    }
 
+    public double getLat(){return lat;}
+
+    @Override
+    public String toString() {
+        return name;
     }
 
 }

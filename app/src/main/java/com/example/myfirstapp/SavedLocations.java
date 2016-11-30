@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -31,12 +35,12 @@ import java.util.ArrayList;
  */
 
 public class SavedLocations extends AppCompatActivity {
-    private ArrayList<String> listItems = new ArrayList<String>();
+
+    private ArrayList<SavedLocation> listLocations = new ArrayList<SavedLocation>();
     private ListView listView;
     private Runnable retrieveLocations;
-
-    private static final String LOCATIONS_FILENAME = "locations";
-    LocationsAdapter adapter;
+    public static final String LOCATIONS_FILENAME = "locations";
+    private LocationsAdapter adapter;
 
     /**
      * Called when the activity is first created.
@@ -45,71 +49,88 @@ public class SavedLocations extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.savedlocations);
+        adapter = new LocationsAdapter (this, R.layout.locations_row, listLocations);
         listView = (ListView) findViewById(R.id.list);
-        adapter = new LocationsAdapter<String>(this, R.layout.locations_row, listItems);
         listView.setAdapter(adapter);
         retrieveLocations = new Runnable(){
             public void run(){
                 handler.sendEmptyMessage(0);
             }
         };
-        Thread t = new Thread(null, retrieveLocations, "MagentoBackground");
+        Thread t = new Thread(null, retrieveLocations, "ReadFile");
         t.start();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("Flow", "stop");
+        try {
+            File file = new File(getFilesDir(), LOCATIONS_FILENAME);
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(listLocations);
+            oos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        Log.d("Leaving activity", "list size is " + String.valueOf(listLocations.size()));
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("Flow", "pause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("Flow", "destroy");
+        super.onDestroy();
     }
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg){
-            BufferedReader input = null;
-            File file = null;
             try {
-                file = new File(getFilesDir(), LOCATIONS_FILENAME); // Pass getFilesDir() and "MyFile" to read file
-                input = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-                String line;
-                StringBuffer buffer = new StringBuffer();
-                while ((line = input.readLine()) != null) {
-//                    String[] locationArray = line.split("|");
-//                    System.out.println(locationArray[0]);
-                    listItems.add(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+                listLocations = readData();
             }
-            adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listItems);
+            catch (IOException e){
+                listLocations = new ArrayList<SavedLocation>();
+            }
+            adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listLocations);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
     };
 
-    public void writeData(View w) {
-        File file;
-        String content = "Location\n";
-        String content1 = "Location\n";
-        String content2 = "Location\n";
-        FileOutputStream outputStream;
-        try {
-            file = new File(LOCATIONS_FILENAME);
-            outputStream = openFileOutput(LOCATIONS_FILENAME, MODE_APPEND);
-            outputStream.write(content.getBytes());
-            outputStream.write(content1.getBytes());
-            outputStream.write(content2.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+    private ArrayList<SavedLocation> readData() throws IOException {
+        ArrayList<SavedLocation> read = new ArrayList<SavedLocation>();
+        ObjectInputStream ois = null;
+        File file = new File(getFilesDir(), LOCATIONS_FILENAME);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ois = new ObjectInputStream(fis);
+                read = (ArrayList<SavedLocation>) ois.readObject();
+                ois.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
-//        listItems.add("");
-//        adapter.notifyDataSetChanged();
+        return read;
     }
 
-    public class LocationsAdapter<String> extends ArrayAdapter<String> {
+    public class LocationsAdapter extends ArrayAdapter<SavedLocation> {
 
-        ArrayList<String> list;
+        ArrayList<SavedLocation> list;
         private TextView text;
 
-        public LocationsAdapter(Context context, int textViewResourceId, ArrayList<String> objects) {
+        public LocationsAdapter(Context context, int textViewResourceId, ArrayList<SavedLocation> objects) {
             super(context, textViewResourceId, objects);
             list = objects;
         }
-
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -117,7 +138,6 @@ public class SavedLocations extends AppCompatActivity {
 
             if (convertView == null) {
                 viewHolder = new ViewHolder();
-//                LayoutInflater inflater = LayoutInflater.from(getContext());
                 convertView = inflater.inflate(R.layout.locations_row, null, false);
                 viewHolder.locationName = (TextView) convertView.findViewById(R.id.location_name);
                 viewHolder.delete = (Button) convertView.findViewById(R.id.delete);
@@ -126,16 +146,15 @@ public class SavedLocations extends AppCompatActivity {
             else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-//            System.out.println(list.size());
-//            System.out.println("hello: " +list.get(0));
-            String i = list.get(position);
-            if (i != null) {
-                System.out.println(list.get(position));
-                viewHolder.locationName.setText(list.get(position).toString());
+            SavedLocation l = (SavedLocation) list.get(position);
+            if (l != null) {
+                viewHolder.locationName.setText(l.toString());
                 viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         list.remove(position);
+                        Log.d("Size", "adapter list: " + list.size());
+                        Log.d("Size", "list: " + listLocations.size());
                         adapter.notifyDataSetChanged();
                     }
                 });

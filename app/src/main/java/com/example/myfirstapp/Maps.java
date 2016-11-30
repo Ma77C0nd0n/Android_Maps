@@ -37,15 +37,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Marker currentMarker = null;
     private GoogleApiClient client;
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton;
     private int MODE;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +80,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 alarmSaveButton.setVisibility(View.INVISIBLE);
                 alarmCancelButton.setVisibility(View.VISIBLE);
                 Toast t = Toast.makeText
-                        (getApplicationContext(),"Alarm set!",Toast.LENGTH_SHORT);
+                        (getApplicationContext(), "Alarm set!", Toast.LENGTH_SHORT);
                 t.show();
             }
         });
@@ -82,7 +91,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 stopAlarm();
                 alarmCancelButton.setVisibility(View.INVISIBLE);
                 Toast t = Toast.makeText
-                        (getApplicationContext(),"Alarm stopped!",Toast.LENGTH_SHORT);
+                        (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
                 t.show();
             }
         });
@@ -90,11 +99,54 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d("Saving"," starting save");
+                if (currentMarker != null) {
+                    Log.d("Saving", "got through");
+                    String name = "location";
+                    SavedLocation s = new SavedLocation(currentMarker.getPosition(), name);
+                    try {
+                        File file = new File(getFilesDir(), SavedLocations.LOCATIONS_FILENAME);
+                        ArrayList<SavedLocation> temp = readData();
+                        temp.add(s);
+                        FileOutputStream fos = new FileOutputStream(file);
+                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                        oos.writeObject(temp);
+                        oos.close();
+                        Toast t = Toast.makeText
+                                (getApplicationContext(), "Save successful!", Toast.LENGTH_SHORT);
+                        t.show();
+                    } catch (IOException ex) {
+                        Log.d("Saving","hmm");
+                        ex.printStackTrace();
+                    }
+                } else {
+                    Toast t = Toast.makeText
+                            (getApplicationContext(), "No location selected!", Toast.LENGTH_LONG);
+                    t.show();
+                }
                 //TODO: Evin put saving code here pls <3
 
             }
         });
+    }
+
+    private ArrayList<SavedLocation> readData() throws IOException {
+        ArrayList<SavedLocation> read = new ArrayList<SavedLocation>();
+        ObjectInputStream ois = null;
+        File file = new File(getFilesDir(), SavedLocations.LOCATIONS_FILENAME);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ois = new ObjectInputStream(fis);
+                read = (ArrayList<SavedLocation>) ois.readObject();
+                ois.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return read;
     }
 
     /**
@@ -143,10 +195,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                marker.setTitle(marker.getPosition().latitude+", "
-                        +marker.getPosition().longitude);
+                marker.setTitle(marker.getPosition().latitude + ", "
+                        + marker.getPosition().longitude);
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                currentMarker = marker;
             }
         });
 
@@ -156,6 +209,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             public boolean onMarkerClick(Marker marker) {
                 alarmSetButton.setVisibility(View.VISIBLE);
                 alarmSaveButton.setVisibility(View.VISIBLE);
+                currentMarker = marker;
                 return false;
             }
 
@@ -172,6 +226,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 marker.setDraggable(true);
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                currentMarker = marker;
             }
         });
 
@@ -196,7 +251,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
         // Set view over Dublin
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932,-6.2603), 6.5f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932, -6.2603), 6.5f));
     }
 
     private void hideKeyboard() {
@@ -245,6 +300,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         MODE = 1;
         // TODO: Get distance to work and use alarm
     }
+
     private void stopAlarm() {
         MODE = 0;
         // TODO: Stop distance form working

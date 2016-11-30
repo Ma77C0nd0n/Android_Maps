@@ -4,13 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-
-    <Button android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/AddItemsButton"
-        android:text="Write Example Data" android:onClick="writeData"></Button>
-
     <ListView android:layout_width="match_parent"
         android:layout_height="wrap_content" android:id="@+id/list"></ListView>
-
 
 </LinearLayout>
