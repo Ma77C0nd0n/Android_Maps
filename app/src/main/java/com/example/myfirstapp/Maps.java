@@ -8,36 +8,30 @@ import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
- //   private EditText location_tf;
+    private EditText location_tf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +42,18 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-//        this.location_tf = (EditText)findViewById(R.id.);
-//
-//        location_tf.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                    onSearch(v);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        this.location_tf = (EditText)findViewById(R.id.TFAddress);
+
+        location_tf.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    onSearch(v);
+                    return true;
+                }
+                return false;
+            }
+        });
 
     }
 
@@ -83,33 +77,37 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+        // Hide Save button
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapLongClick(LatLng latLng) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng).title(
-                        ""+latLng.latitude+","+latLng.longitude
-                ));
+            public void onMapClick(LatLng latLng) {
+                Button b = (Button) findViewById(R.id.save_location_button);
+                b.setVisibility(View.INVISIBLE);
             }
         });
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            private static final String TAG = "MainActivity";
+        // Create Marker
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
-            public void onPlaceSelected(Place place) {
+            public void onMapLongClick(LatLng latLng) {
+
                 mMap.clear();
-                Log.i(TAG, "Place: " + place.getName());
-                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title((String) place.getName()));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),16.5f));
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
+                        "" + latLng.latitude + "," + latLng.longitude
+                ));
 
-            }
+                marker.setDraggable(true);
 
-            @Override
-            public void onError(Status status) {
-                Log.i(TAG, "An error occurred: " + status);
+                // Save location button
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        Button b = (Button) findViewById(R.id.save_location_button);
+                        b.setVisibility(View.VISIBLE);
+                        return false;
+                    }
+
+                });
             }
         });
     }
@@ -117,24 +115,24 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onSearch(View view){
         hideKeyboard();
         mMap.clear();
-        //        String location = location_tf.getText().toString();
-//        List<Address> addressList = null;
-//        Geocoder geocoder = new Geocoder(this);
-//        try {
-//            addressList = geocoder.getFromLocationName(location,1);
-//            Address address = addressList.get(0);
-//            LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-//            mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,16.5f));
-//        } catch (IOException e) {
-//            Toast t = Toast.makeText
-//                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
-//            t.show();
-//        } catch (Exception e) {
-//            Toast t = Toast.makeText
-//                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
-//            t.show();
-//        }
+        String location = location_tf.getText().toString();
+        List<Address> addressList = null;
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            addressList = geocoder.getFromLocationName(location,1);
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,16.5f));
+        } catch (IOException e) {
+            Toast t = Toast.makeText
+                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
+            t.show();
+        } catch (Exception e) {
+            Toast t = Toast.makeText
+                    (this.getApplicationContext(),(location+ " not found!"), Toast.LENGTH_SHORT);
+            t.show();
+        }
 
     }
 

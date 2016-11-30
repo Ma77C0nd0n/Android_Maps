@@ -6,23 +6,62 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
 
-      <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-          tools:context="com.example.myfirstapp.Maps"
-          app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="78dp"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:id="@+id/Bsearch"
+        android:onClick="onSearch"
+        android:layout_gravity="right"
+        app:layout_constraintTop_toTopOf="@+id/TFAddress"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/TFAddress" />
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:id="@+id/TFAddress"
+        android:paddingRight="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/Bsearch"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:inputType="text"
+        android:hint="Enter Location..."
+        android:layout_marginStart="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
-          android:layout_width="0dp"
-          android:layout_height="0dp"
-          app:layout_constraintTop_toBottomOf="@+id/place_autocomplete_fragment" />
+        android:layout_marginLeft="8dp"
+        android:maxLines="1"
+        android:imeOptions="actionSearch"/>
+
+    <Button
+        android:text="Save Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_location_button"
+        app:layout_constraintLeft_toLeftOf="@+id/map"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="32dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:visibility="invisible" />
 
     <fragment
-        android:id="@+id/place_autocomplete_fragment"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp" />
+        tools:context="com.example.myfirstapp.Maps"
+        android:layout_height="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TFAddress"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="1.0" />
+
+
 </android.support.constraint.ConstraintLayout>

@@ -1,20 +1,15 @@
 package com.example.myfirstapp;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.Sensor;
-import android.media.MediaCodec;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.os.Vibrator;
-import android.provider.*;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -63,7 +58,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         if(!is_playing){
             this.ringtone.play();
-            long[] pattern = {0, 100, 1000};
+            long[] pattern = {400, 600};
             this.vibrator.vibrate(pattern, 0);
         }
         is_playing = true;
