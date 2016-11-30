@@ -5,15 +5,20 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -81,13 +87,37 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        // Hide Save button
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Button b = (Button) findViewById(R.id.save_location_button);
+                b.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // Create Marker
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
+
                 mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng).title(
-                        ""+latLng.latitude+","+latLng.longitude
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
+                        "" + latLng.latitude + "," + latLng.longitude
                 ));
+
+                marker.setDraggable(true);
+
+                // Save location button
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        Button b = (Button) findViewById(R.id.save_location_button);
+                        b.setVisibility(View.VISIBLE);
+                        return false;
+                    }
+
+                });
             }
         });
     }

@@ -5,12 +5,17 @@
     android:layout_height="fill_parent">
 
 
-    <Button android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/AddItemsButton"
-        android:text="Write Example Data" android:onClick="writeData"></Button>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddItemsButton"
+        android:text="Write Example Data"
+        android:onClick="writeData" />
 
-    <ListView android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/list"></ListView>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list" />
 
 
 </LinearLayout>
