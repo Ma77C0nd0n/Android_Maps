@@ -5,20 +5,15 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +27,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -80,10 +74,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
-
-        // Change this to user's location later
-        LatLng dublin = new LatLng(53.3498, 6.2603);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dublin, 18.0f));
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
