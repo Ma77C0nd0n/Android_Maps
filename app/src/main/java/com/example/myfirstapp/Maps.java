@@ -93,28 +93,50 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        // Set Drag instructions
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                marker.hideInfoWindow();
+                alarmSetButton.setVisibility(View.INVISIBLE);
+                alarmSaveButton.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                marker.setTitle(marker.getPosition().latitude+", "
+                        +marker.getPosition().longitude);
+                marker.showInfoWindow();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+            }
+        });
+
+        // Save location button
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                alarmSetButton.setVisibility(View.VISIBLE);
+                alarmSaveButton.setVisibility(View.VISIBLE);
+                return false;
+            }
+
+        });
+
         // Create Marker
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-
                 mMap.clear();
                 Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
                         "" + latLng.latitude + "," + latLng.longitude
                 ));
-
                 marker.setDraggable(true);
-
-                // Save location button
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        alarmSetButton.setVisibility(View.VISIBLE);
-                        alarmSaveButton.setVisibility(View.VISIBLE);
-                        return false;
-                    }
-
-                });
+                marker.showInfoWindow();
             }
         });
 
