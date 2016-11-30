@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -24,6 +25,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -41,12 +43,9 @@ import java.util.List;
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
-    private Button alarmSetButton, alarmSaveButton;
+    private Button alarmSetButton, alarmSaveButton, alarmCancelButton;
+    private int MODE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +55,46 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        alarmSaveButton = (Button) findViewById(R.id.save_location_button);
+        alarmSetButton = (Button) findViewById(R.id.set_location_button);
+        alarmCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
+
+        MODE = 0; // Set mode to 1 when alarm is set
+
+        alarmSetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAlarm();
+                alarmSetButton.setVisibility(View.INVISIBLE);
+                alarmSaveButton.setVisibility(View.INVISIBLE);
+                alarmCancelButton.setVisibility(View.VISIBLE);
+                Toast t = Toast.makeText
+                        (getApplicationContext(),"Alarm set!",Toast.LENGTH_SHORT);
+                t.show();
+            }
+        });
+
+        alarmCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopAlarm();
+                alarmCancelButton.setVisibility(View.INVISIBLE);
+                Toast t = Toast.makeText
+                        (getApplicationContext(),"Alarm stopped!",Toast.LENGTH_SHORT);
+                t.show();
+            }
+        });
+
+        alarmSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO: Evin put saving code here pls <3
+
+            }
+        });
     }
 
     /**
@@ -74,8 +109,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        alarmSaveButton = (Button) findViewById(R.id.save_location_button);
-        alarmSetButton = (Button) findViewById(R.id.set_location_button);
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -137,6 +171,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 ));
                 marker.setDraggable(true);
                 marker.showInfoWindow();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
             }
         });
 
@@ -160,6 +195,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+        // Set view over Dublin
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932,-6.2603), 6.5f));
     }
 
     private void hideKeyboard() {
@@ -202,5 +239,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    private void setAlarm() {
+        MODE = 1;
+        // TODO: Get distance to work and use alarm
+    }
+    private void stopAlarm() {
+        MODE = 0;
+        // TODO: Stop distance form working
     }
 }
