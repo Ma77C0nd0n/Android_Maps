@@ -46,6 +46,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private Button alarmSetButton, alarmSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        alarmSaveButton = (Button) findViewById(R.id.save_location_button);
+        alarmSetButton = (Button) findViewById(R.id.set_location_button);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -85,8 +88,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Button b = (Button) findViewById(R.id.save_location_button);
-                b.setVisibility(View.INVISIBLE);
+                alarmSetButton.setVisibility(View.INVISIBLE);
+                alarmSaveButton.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -106,8 +109,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        Button b = (Button) findViewById(R.id.save_location_button);
-                        b.setVisibility(View.VISIBLE);
+                        alarmSetButton.setVisibility(View.VISIBLE);
+                        alarmSaveButton.setVisibility(View.VISIBLE);
                         return false;
                     }
 
