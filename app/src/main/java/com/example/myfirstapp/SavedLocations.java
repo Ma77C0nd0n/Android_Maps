@@ -1,14 +1,18 @@
 package com.example.myfirstapp;
 
+import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -25,7 +30,7 @@ import java.util.ArrayList;
  * Created by rucha on 13-Nov-16.
  */
 
-public class SavedLocationsActivity extends AppCompatActivity {
+public class SavedLocations extends AppCompatActivity {
     private ArrayList<String> listItems = new ArrayList<String>();
     private ListView listView;
     private Runnable retrieveLocations;
@@ -48,7 +53,7 @@ public class SavedLocationsActivity extends AppCompatActivity {
                 handler.sendEmptyMessage(0);
             }
         };
-        Thread t = new Thread(null, retrieveLocations, "ReadFile");
+        Thread t = new Thread(null, retrieveLocations, "MagentoBackground");
         t.start();
     }
 
@@ -69,7 +74,7 @@ public class SavedLocationsActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            adapter = new LocationsAdapter(SavedLocationsActivity.this, R.layout.locations_row, listItems);
+            adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listItems);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

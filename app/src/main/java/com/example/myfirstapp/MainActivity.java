@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         if (v.getId() == R.id.Bsettings) {
             i = new Intent(MainActivity.this, Settings.class);
         } else if (v.getId() == R.id.Bsavedlocations) {
-            i = new Intent(MainActivity.this, SavedLocationsActivity.class);
+            i = new Intent(MainActivity.this, SavedLocations.class);
         } else if (v.getId() == R.id.Bmap) {
             i = new Intent(MainActivity.this, Maps.class);
         } else if (v.getId() == R.id.debug_alarm_button) {

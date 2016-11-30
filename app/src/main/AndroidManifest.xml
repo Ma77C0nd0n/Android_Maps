@@ -42,7 +42,7 @@
             android:name=".Settings"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".SavedLocationsActivity"
+            android:name=".SavedLocations"
             android:label="@string/title_activity_locations"/>
         <activity
             android:name=".AlarmActivity"
