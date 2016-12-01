@@ -56,7 +56,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         this.ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        if(!is_playing){
+        if (!is_playing) {
             this.ringtone.play();
             long[] pattern = {400, 600};
             this.vibrator.vibrate(pattern, 0);

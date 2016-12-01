@@ -49,11 +49,11 @@ public class SavedLocations extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.savedlocations);
-        adapter = new LocationsAdapter (this, R.layout.locations_row, listLocations);
+        adapter = new LocationsAdapter(this, R.layout.locations_row, listLocations);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
-        retrieveLocations = new Runnable(){
-            public void run(){
+        retrieveLocations = new Runnable() {
+            public void run() {
                 handler.sendEmptyMessage(0);
             }
         };
@@ -89,12 +89,11 @@ public class SavedLocations extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private Handler handler = new Handler(){
-        public void handleMessage(Message msg){
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
             try {
                 listLocations = readData();
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 listLocations = new ArrayList<SavedLocation>();
             }
             adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listLocations);
@@ -131,6 +130,7 @@ public class SavedLocations extends AppCompatActivity {
             super(context, textViewResourceId, objects);
             list = objects;
         }
+
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -142,8 +142,7 @@ public class SavedLocations extends AppCompatActivity {
                 viewHolder.locationName = (TextView) convertView.findViewById(R.id.location_name);
                 viewHolder.delete = (Button) convertView.findViewById(R.id.delete);
                 convertView.setTag(viewHolder);
-            }
-            else {
+            } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             SavedLocation l = (SavedLocation) list.get(position);

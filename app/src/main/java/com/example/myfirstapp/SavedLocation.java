@@ -12,13 +12,15 @@ public class SavedLocation implements Serializable {
     private String name;
     double lat, lng;
 
-    SavedLocation(LatLng point, String name){
+    SavedLocation(LatLng point, String name) {
         lat = point.latitude;
         lng = point.longitude;
         this.name = name;
     }
 
-    public double getLat(){return lat;}
+    public double getLat() {
+        return lat;
+    }
 
     @Override
     public String toString() {

@@ -46,6 +46,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -99,11 +100,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Saving"," starting save");
+                Log.d("Saving", " starting save");
                 if (currentMarker != null) {
                     Log.d("Saving", "got through");
-                    String name = "location";
-                    SavedLocation s = new SavedLocation(currentMarker.getPosition(), name);
+                    LatLng point = currentMarker.getPosition();
+                    String addressLine = getAddressLine(point);
+                    Log.d("Location", addressLine);
+                    SavedLocation s = new SavedLocation(point, addressLine);
                     try {
                         File file = new File(getFilesDir(), SavedLocations.LOCATIONS_FILENAME);
                         ArrayList<SavedLocation> temp = readData();
@@ -116,7 +119,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                                 (getApplicationContext(), "Save successful!", Toast.LENGTH_SHORT);
                         t.show();
                     } catch (IOException ex) {
-                        Log.d("Saving","hmm");
                         ex.printStackTrace();
                     }
                 } else {
@@ -147,6 +149,19 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         }
         return read;
+    }
+
+    public String getAddressLine(LatLng point) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> results = geocoder.getFromLocation(point.latitude, point.longitude, 1);
+            if (results != null) {
+                return results.get(0).getAddressLine(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Location";
     }
 
     /**
@@ -195,11 +210,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                marker.setTitle(marker.getPosition().latitude + ", "
-                        + marker.getPosition().longitude);
+                marker.setTitle(getAddressLine(marker.getPosition()));
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 currentMarker = marker;
+                Log.i("Last marker", "marker drag end");
             }
         });
 
@@ -210,6 +225,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 alarmSetButton.setVisibility(View.VISIBLE);
                 alarmSaveButton.setVisibility(View.VISIBLE);
                 currentMarker = marker;
+                Log.i("Last marker", "click on marker");
                 return false;
             }
 
@@ -220,13 +236,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 mMap.clear();
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
-                        "" + latLng.latitude + "," + latLng.longitude
-                ));
+//                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
+//                        "" + latLng.latitude + "," + latLng.longitude
+//                ));
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
                 marker.setDraggable(true);
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 currentMarker = marker;
+                Log.i("Last marker", "long click");
             }
         });
 
