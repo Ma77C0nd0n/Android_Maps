@@ -19,6 +19,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.List;
@@ -91,6 +92,7 @@ public class Settings extends AppCompatPreferenceActivity {
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
+                Log.d("thing", preference.getKey());
                 preference.setSummary(stringValue);
             }
             return true;
@@ -147,6 +149,7 @@ public class Settings extends AppCompatPreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (id == android.R.id.home) {
             finish();
             return true;
@@ -192,11 +195,6 @@ public class Settings extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_alarm);
             setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
         }
 
         @Override
@@ -221,12 +219,6 @@ public class Settings extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_map);
             setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-//            bindPreferenceSummaryToValue(findPreference("shake_amount"));
         }
 
         @Override

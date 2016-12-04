@@ -4,28 +4,9 @@
     <EditTextPreference
         android:inputType="number"
         android:summary="@string/pref_summary_distance"
-        android:defaultValue="100"
+        android:defaultValue="200"
         android:maxLength="4"
-        android:title="@string/pref_title_distance" />
-    <!--<TextView-->
-        <!--android:text="@string/select_distance"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:id="@+id/distance"-->
-        <!--/>-->
-
-        <!--android:entries="@array/pref_shake_amount_titles"-->
-        <!--android:entryValues="@array/pref_shake_amount_values"-->
-        <!--android:key="map_distance" />-->
-
-    <!--<Spinner-->
-        <!--android:id="@+id/spinner"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_toRightOf="@+id/distance"-->
-        <!--&gt;</Spinner>-->
-
+        android:title="@string/pref_title_distance"
+        android:key="@string/distance_key"/>
 
 </PreferenceScreen>

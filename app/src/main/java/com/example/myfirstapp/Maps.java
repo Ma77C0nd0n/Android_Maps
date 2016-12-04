@@ -59,7 +59,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton, spotifyButton;
     private int MODE;
     // TEMPORARY
-    private int distanceSetting = 100;
+    private static final String DEFAULT_DISTANCE = "200";
+    private int distanceSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        distanceSetting = prefs.getInt(MAP_DISTANCE, distanceSetting);
-        Log.d("distance", String.valueOf(distanceSetting));
+        distanceSetting = Integer.parseInt(prefs.getString(MAP_DISTANCE, DEFAULT_DISTANCE));
 
         // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
