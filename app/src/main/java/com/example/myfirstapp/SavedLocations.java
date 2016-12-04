@@ -3,11 +3,15 @@ package com.example.myfirstapp;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -43,6 +48,7 @@ public class SavedLocations extends AppCompatActivity {
     private ListView listView;
     private Runnable retrieveLocations;
     public static final String LOCATIONS_FILENAME = "locations";
+    public static final String LAT_LNG_KEY = "latlng";
     private LocationsAdapter adapter;
 
     /**
@@ -172,19 +178,42 @@ public class SavedLocations extends AppCompatActivity {
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()){
                                     case R.id.location_edit:
-                                        printList();
-                                        list.get(position).setName("Test change location name");
-                                        adapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(),"Edit location @" + position, Toast.LENGTH_SHORT).show();
+//                                        printList();
+//                                        list.get(position).setName("Test change location name");
+                                        final EditText text = new EditText(context);
+                                        text.setInputType(InputType.TYPE_CLASS_TEXT);
+                                        new AlertDialog.Builder(context)
+                                                .setTitle("Enter new location name")
+                                                .setView(text)
+                                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        String name = text.getText().toString();
+                                                        list.get(position).setName(name);
+                                                        adapter.notifyDataSetChanged();
+                                                        Toast.makeText(getApplicationContext(),"Name changed!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                })
+                                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                    }
+                                                }).show();
                                         return true;
                                     case R.id.location_remove:
-                                        Log.i("Removing", list.get(position).toString());
                                         list.remove(position);
                                         adapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(),"Remove location @" + position, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(),"Removed location!" + position, Toast.LENGTH_SHORT).show();
                                         return true;
                                     case R.id.location_set:
-                                        Toast.makeText(getApplicationContext(),"Set location @" + position, Toast.LENGTH_SHORT).show();
+//                                        Intent intent = new Intent(SavedLocations.this, Maps.class);
+//                                        SavedLocation s = list.get(position);
+//                                        LatLng point = new LatLng(s.lat, s.lng);
+//                                        Bundle bundle = new Bundle();
+//                                        bundle.putParcelable(LAT_LNG_KEY, point);
+//                                        startActivity(intent);
+                                        Toast.makeText(getApplicationContext(),"sending intent", Toast.LENGTH_SHORT).show();
                                         return true;
                                 }
                                 return false;
