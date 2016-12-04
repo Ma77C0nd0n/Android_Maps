@@ -76,6 +76,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         is_playing = true;
     }
 
+    /**
+     * Applies updated settings on initiation
+     * Vibration can be turned on or off, and the shake sensitivity adjusted
+     */
     private void updatePreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         shakeAmount = Integer.parseInt(prefs.getString(SHAKE_KEY, DEFAULT_SHAKE_AMOUNT));

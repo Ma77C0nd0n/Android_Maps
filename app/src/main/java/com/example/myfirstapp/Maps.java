@@ -3,6 +3,7 @@ package com.example.myfirstapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -11,6 +12,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -46,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.example.myfirstapp.Settings.MAP_DISTANCE;
+
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -61,7 +65,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        distanceSetting = prefs.getInt(MAP_DISTANCE, distanceSetting);
+
         // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
         alarmSetButton = (Button) findViewById(R.id.set_location_button);
