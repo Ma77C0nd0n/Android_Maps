@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -8,20 +9,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context="com.example.myfirstapp.MainActivity">
-
-    <Button
-        android:text="Settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/Bsettings"
-        android:onClick="onButtonClick"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/Bsavedlocations"
-        android:layout_marginTop="@dimen/cast_intro_overlay_button_margin_bottom"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_blue_dark" />
 
     <Button
         android:text="Saved Locations"
@@ -36,17 +23,6 @@
         android:background="?attr/colorAccent" />
 
     <Button
-        android:text="[Delete before deploy] ALARM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
-        android:id="@+id/debug_alarm_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onButtonClick" />
-
-    <Button
         android:text="Open Map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +34,29 @@
         android:layout_alignParentStart="true"
         style="@style/Widget.AppCompat.Button.Colored"
         android:background="@android:color/holo_green_dark" />
+
+    <Button
+        android:text="Settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Bsettings"
+        android:onClick="onButtonClick"
+        android:layout_marginTop="49dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@color/colorPrimaryDark"
+        android:layout_below="@+id/Bsavedlocations"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView2"
+        android:layout_above="@+id/Bmap" />
 
 
 </RelativeLayout>

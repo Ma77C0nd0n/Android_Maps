@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
             i = new Intent(MainActivity.this, SavedLocations.class);
         } else if (v.getId() == R.id.Bmap) {
             i = new Intent(MainActivity.this, Maps.class);
-        } else if (v.getId() == R.id.debug_alarm_button) {
-            i = new Intent(MainActivity.this, AlarmActivity.class);
         } else {
             i = null;
         }
