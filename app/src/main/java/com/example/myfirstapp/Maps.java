@@ -85,6 +85,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 stopAlarm();
+                Toast t = Toast.makeText
+                        (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
+                t.show();
             }
         });
 
@@ -285,9 +288,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         dest.setLongitude(end.longitude);
         int distance = (int) startLocation.distanceTo(dest);
         String temp = Integer.toString(distance);
-        Toast d = Toast.makeText
-                (getApplicationContext(), temp, Toast.LENGTH_SHORT);
-        d.show();
         return distance;
     }
 
@@ -311,10 +311,24 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     public void onStop() {
+        if(MODE == 1) {
+            Toast t = Toast.makeText
+                    (getApplicationContext(), "Alarm still running in background!", Toast.LENGTH_LONG);
+            t.show();
+        }
         super.onStop();
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-        stopAlarm();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (MODE == 0) {
+            super.onBackPressed();
+        } else {
+            Toast t = Toast.makeText
+                    (getApplicationContext(), "Please stop alarm before" +
+                            " leaving this screen!", Toast.LENGTH_SHORT);
+            t.show();
+        }
     }
 
     // For updating map every X seconds
@@ -345,8 +359,5 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         MODE = 0;
         handler.removeCallbacks(runnable);
         alarmCancelButton.setVisibility(View.INVISIBLE);
-        Toast t = Toast.makeText
-                (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
-        t.show();
     }
 }
