@@ -29,12 +29,14 @@
     </string-array>
     <string-array name="pref_shake_amount_values">
         <item>0</item>
-        <item>8</item>
-        <item>12</item>
         <item>16</item>
+        <item>12</item>
+        <item>8</item>
     </string-array>
 
     <!--map distance settings-->
+    <string name="pref_title_distance">Alarm Distance</string>
+    <string name="pref_summary_distance">Distance from point for alarm notification</string>
     <string name="select_distance">Select Distance</string>
 
     <!-- Example settings for Notifications -->

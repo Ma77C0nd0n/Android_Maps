@@ -3,10 +3,10 @@
 
     <EditTextPreference
         android:inputType="number"
-        android:summary="Kill him pls"
-        android:defaultValue="500"
+        android:summary="@string/pref_summary_distance"
+        android:defaultValue="100"
         android:maxLength="4"
-        android:title="Help me with my friend's depression" />
+        android:title="@string/pref_title_distance" />
     <!--<TextView-->
         <!--android:text="@string/select_distance"-->
         <!--android:layout_width="wrap_content"-->

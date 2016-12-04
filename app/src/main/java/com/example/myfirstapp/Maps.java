@@ -68,6 +68,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_maps);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         distanceSetting = prefs.getInt(MAP_DISTANCE, distanceSetting);
+        Log.d("distance", String.valueOf(distanceSetting));
 
         // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
