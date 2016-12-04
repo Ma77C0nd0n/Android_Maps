@@ -31,6 +31,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -237,6 +238,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                             (new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
                     currentMarker.setDraggable(true);
                     currentMarker.showInfoWindow();
+                    currentMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(currentMarker.getPosition()));
                 }
             }
@@ -253,7 +255,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 if(MODE == 0) {
                     mMap.clear();
                     Log.i(TAG, "Place: " + place.getName());
-                    mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title((String) place.getName()));
+                    currentMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
+                            .title((String) place.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small)));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
                 }
             }
