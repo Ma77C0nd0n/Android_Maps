@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="@bool/pref_vibrate_default"
+        android:key="@string/vibrate_key"
+        android:title="@string/pref_title_vibrate" />
+
+    <ListPreference
+        android:defaultValue="@string/shake_amount_default_value"
+        android:title="@string/pref_title_shake_amount"
+        android:entries="@array/pref_shake_amount_titles"
+        android:entryValues="@array/pref_shake_amount_values"
+        android:key="@string/shake_amount_key"/>
+
+    <!--<RingtonePreference-->
+    <!--android:defaultValue="content://settings/system/NOTIFICATION_SOUND"-->
+    <!--android:dependency="notifications_new_message"-->
+    <!--android:key="notifications_new_message_ringtone"-->
+    <!--android:ringtoneType="alarm"-->
+    <!--android:title="@string/pref_title_ringtone" />-->
+
+
+</PreferenceScreen>

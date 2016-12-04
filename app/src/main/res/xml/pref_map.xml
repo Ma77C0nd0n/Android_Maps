@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--change this to a spinner-->
+    <ListPreference
+        android:defaultValue="200m"
+        android:title="map distance"
+        android:entries="@array/pref_shake_amount_titles"
+        android:entryValues="@array/pref_shake_amount_values"
+        android:key="map_distance" />
+
+</PreferenceScreen>
