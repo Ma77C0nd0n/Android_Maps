@@ -27,10 +27,9 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_lock_idle_alarm"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/pin"
         android:id="@+id/imageView"
-        android:layout_weight="0.39"
         android:adjustViewBounds="true"
         android:alpha="20"
         android:cropToPadding="false" />
