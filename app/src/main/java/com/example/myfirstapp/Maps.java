@@ -129,7 +129,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                             (getApplicationContext(), "No location selected!", Toast.LENGTH_LONG);
                     t.show();
                 }
-                //TODO: Evin put saving code here pls <3
 
             }
         });
@@ -180,24 +179,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
-
-        LocationManager locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        Location location = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(criteria, false));
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        final Location startLocation = new Location("");//provider name is unecessary
-        startLocation.setLatitude(latitude);//your coords of course
-        startLocation.setLongitude(longitude);
-
-        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Hide Save button
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -229,7 +215,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 currentMarker = marker;
                 Log.i("Last marker", "marker drag end");
-                getDistance(startLocation, marker.getPosition());
+                getDistance(marker.getPosition());
             }
         });
 
@@ -240,7 +226,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 alarmSetButton.setVisibility(View.VISIBLE);
                 alarmSaveButton.setVisibility(View.VISIBLE);
                 currentMarker = marker;
-                Log.i("Last marker", "click on marker");
+                getDistance(currentMarker.getPosition());
                 return false;
             }
 
@@ -251,20 +237,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 mMap.clear();
-//                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(
-//                        "" + latLng.latitude + "," + latLng.longitude
-//                ));
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
-                marker.setDraggable(true);
-                marker.showInfoWindow();
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                currentMarker = marker;
+                currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
+                currentMarker.setDraggable(true);
+                currentMarker.showInfoWindow();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(currentMarker.getPosition()));
                 Log.i("Last marker", "long click");
-                getDistance(startLocation, marker.getPosition());
+                getDistance(currentMarker.getPosition());
             }
         });
-
-
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -278,8 +258,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 Log.i(TAG, "Place: " + place.getName());
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title((String) place.getName()));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
-                getDistance(startLocation, place.getLatLng());
-
+                getDistance(place.getLatLng());
             }
 
             @Override
@@ -287,21 +266,32 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+
         // Set view over Dublin
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932, -6.2603), 6.5f));
     }
 
-    private void hideKeyboard() {
-        InputMethodManager imm
-                = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-    }
+    public void getDistance(LatLng end){
 
-    public void getDistance(Location start, LatLng end){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        Location location = locationManager.getLastKnownLocation(locationManager
+                .getBestProvider(criteria, false));
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        final Location startLocation = new Location(""); // provider name is unecessary
+        startLocation.setLatitude(latitude); // your coords of course
+        startLocation.setLongitude(longitude);
+
         Location dest = new Location("");
-        dest.setLatitude(end.latitude);//your coords of course
+        dest.setLatitude(end.latitude); // your coords of course
         dest.setLongitude(end.longitude);
-        int distance = (int) start.distanceTo(dest);
+        int distance = (int) startLocation.distanceTo(dest);
         String temp = Integer.toString(distance);
         Toast d = Toast.makeText
                 (getApplicationContext(), temp, Toast.LENGTH_SHORT);
@@ -314,8 +304,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Maps Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Maps Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
