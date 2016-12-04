@@ -20,7 +20,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="?attr/colorAccent" />
+        android:background="@color/colorButton" />
 
     <Button
         android:text="Open Map"
@@ -33,7 +33,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_green_dark" />
+        android:background="@color/colorButton" />
 
     <Button
         android:text="Settings"
@@ -43,7 +43,7 @@
         android:onClick="onButtonClick"
         android:layout_marginTop="49dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorButton"
         android:layout_below="@+id/Bsavedlocations"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
