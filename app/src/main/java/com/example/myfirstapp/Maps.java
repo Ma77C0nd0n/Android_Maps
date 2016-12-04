@@ -56,7 +56,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private Marker currentMarker = null;
     private GoogleApiClient client;
-    private Button alarmSetButton, alarmSaveButton, alarmCancelButton;
+    private Button alarmSetButton, alarmSaveButton, alarmCancelButton, spotifyButton;
     private int MODE;
     // TEMPORARY
     private int distanceSetting = 100;
@@ -74,6 +74,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
         alarmSetButton = (Button) findViewById(R.id.set_location_button);
         alarmCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
+        spotifyButton = (Button) findViewById(R.id.spotifyButton);
         MODE = 0; // Set mode to 1 when alarm is set
 
         // Google Maps API default code {
@@ -103,6 +104,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 Toast t = Toast.makeText
                         (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
                 t.show();
+            }
+        });
+
+        // Set click listener for SPOTIFY button
+        spotifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSpotifyActivity();
             }
         });
 
@@ -381,6 +390,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmSetButton.setVisibility(View.INVISIBLE);
         alarmSaveButton.setVisibility(View.INVISIBLE);
         alarmCancelButton.setVisibility(View.VISIBLE);
+        spotifyButton.setVisibility(View.VISIBLE);
     }
 
     // stopAlarm method: update MODE and set button visibility + stop handler for alarm
@@ -388,5 +398,22 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         MODE = 0;
         handler.removeCallbacks(runnable);
         alarmCancelButton.setVisibility(View.INVISIBLE);
+        spotifyButton.setVisibility(View.INVISIBLE);
+    }
+
+    // startSpotifyActivity method: Starts Spotify
+    public void startSpotifyActivity() {
+        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+        if (intent != null) {
+            // We found the activity now start the activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            // Bring user to the market or let them choose an app?
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("market://details?id=com.spotify.music"));
+            startActivity(intent);
+        }
     }
 }
