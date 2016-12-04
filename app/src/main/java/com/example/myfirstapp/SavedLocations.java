@@ -10,13 +10,16 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -121,13 +124,22 @@ public class SavedLocations extends AppCompatActivity {
         return read;
     }
 
+    public void printList(){
+        for (SavedLocation s: listLocations){
+            Log.d("List:", s.toString());
+        }
+
+    }
+
     public class LocationsAdapter extends ArrayAdapter<SavedLocation> {
 
         ArrayList<SavedLocation> list;
         private TextView text;
+        private final Context context;
 
         public LocationsAdapter(Context context, int textViewResourceId, ArrayList<SavedLocation> objects) {
             super(context, textViewResourceId, objects);
+            this.context = context;
             list = objects;
         }
 
@@ -135,12 +147,11 @@ public class SavedLocations extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
             LayoutInflater inflater = getLayoutInflater();
-
             if (convertView == null) {
                 viewHolder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.locations_row, null, false);
                 viewHolder.locationName = (TextView) convertView.findViewById(R.id.location_name);
-                viewHolder.delete = (Button) convertView.findViewById(R.id.delete);
+                viewHolder.popdown = (Button) convertView.findViewById(R.id.location_menu);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -148,13 +159,37 @@ public class SavedLocations extends AppCompatActivity {
             SavedLocation l = (SavedLocation) list.get(position);
             if (l != null) {
                 viewHolder.locationName.setText(l.toString());
-                viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+                viewHolder.popdown.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        list.remove(position);
-                        Log.d("Size", "adapter list: " + list.size());
-                        Log.d("Size", "list: " + listLocations.size());
-                        adapter.notifyDataSetChanged();
+//                        list.remove(position);
+//                        adapter.notifyDataSetChanged();
+                        PopupMenu popup = new PopupMenu(context, v);
+                        popup.getMenuInflater().inflate(R.menu.locations_popdown, popup.getMenu());
+                        popup.show();
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()){
+                                    case R.id.location_edit:
+                                        printList();
+                                        list.get(position).setName("Test change location name");
+                                        adapter.notifyDataSetChanged();
+                                        Toast.makeText(getApplicationContext(),"Edit location @" + position, Toast.LENGTH_SHORT).show();
+                                        return true;
+                                    case R.id.location_remove:
+                                        Log.i("Removing", list.get(position).toString());
+                                        list.remove(position);
+                                        adapter.notifyDataSetChanged();
+                                        Toast.makeText(getApplicationContext(),"Remove location @" + position, Toast.LENGTH_SHORT).show();
+                                        return true;
+                                    case R.id.location_set:
+                                        Toast.makeText(getApplicationContext(),"Set location @" + position, Toast.LENGTH_SHORT).show();
+                                        return true;
+                                }
+                                return false;
+                            }
+                        });
                     }
                 });
             }
@@ -163,7 +198,7 @@ public class SavedLocations extends AppCompatActivity {
 
         private class ViewHolder {
             TextView locationName;
-            Button delete;
+            Button popdown;
         }
 
     }
