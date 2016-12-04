@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/location_remove"
+        android:title="Remove" />
+
+    <item
+        android:id="@+id/location_edit"
+        android:title="Edit name" />
+
+    <item
+        android:id="@+id/location_set"
+        android:title="Set alarm" />
+</menu>
