@@ -34,7 +34,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private long lastShake = 0;
     private int shakeNumber = 2;
     private int shakeAmount;
-    private boolean vibrateOn = true;
+    private boolean vibrateOn;
     //TODO: Add option to disable shake awake from settings menu
 
     @Override
