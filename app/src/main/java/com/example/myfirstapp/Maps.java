@@ -59,19 +59,22 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
+        // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
         alarmSetButton = (Button) findViewById(R.id.set_location_button);
         alarmCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
         MODE = 0; // Set mode to 1 when alarm is set
 
+        // Google Maps API default code {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        // } end Google Maps API default code
+
+        // Set click listener for SET ALARM button
         alarmSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +85,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        // Set click listener for STOP ALARM button
         alarmCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +96,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        // Set click listener for SAVE ALARM button
         alarmSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,9 +131,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         });
     }
 
+    // Method to read data from saved locations
     private ArrayList<SavedLocation> readData() throws IOException {
         ArrayList<SavedLocation> read = new ArrayList<SavedLocation>();
-        ObjectInputStream ois = null;
+        ObjectInputStream ois;
         File file = new File(getFilesDir(), SavedLocations.LOCATIONS_FILENAME);
         if (file.exists()) {
             try {
@@ -145,6 +151,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         return read;
     }
 
+    // Method to get address from LatLng
     public String getAddressLine(LatLng point) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -158,21 +165,16 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         return "Location";
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    // onMapReady method for Google Maps API
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
+
         // Set view over Dublin
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932, -6.2603), 6.5f));
 
+        // Show 'my location' button
         mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -190,6 +192,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         // Set Drag instructions
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            // Hide the text above marker, hide set and save alarm buttons
             @Override
             public void onMarkerDragStart(Marker marker) {
                 if(MODE == 0) {
@@ -199,11 +202,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 }
             }
 
+            // Required method
             @Override
             public void onMarkerDrag(Marker marker) {
-
+                // Do nothing
             }
 
+            // Update marker with new location information
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 marker.setTitle(getAddressLine(marker.getPosition()));
@@ -213,7 +218,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-        // Save location button
+        // Show SET / SAVE buttons when marker is clicked
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -221,14 +226,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     alarmSetButton.setVisibility(View.VISIBLE);
                     alarmSaveButton.setVisibility(View.VISIBLE);
                     currentMarker = marker;
-                    getDistance(currentMarker.getPosition());
                 }
                 return false;
             }
-
         });
 
-        // Create Marker
+        // Create Marker from long press
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -244,12 +247,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        // Initialize search bar above map fragment
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        // Set up listener for when address is selected from search bar
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            private static final String TAG = "MainActivity";
+            private static final String TAG = "MapsActivity";
 
+            // Location has been selected, place marker on map and zoom to location
             @Override
             public void onPlaceSelected(Place place) {
                 if(MODE == 0) {
@@ -270,8 +276,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    // Method to get distance from current location to marker on map
     public int getDistance(LatLng end){
 
+        // Check location is enabled
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
@@ -295,6 +303,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         return distance;
     }
 
+    // Default method from Google Maps API
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Maps Page")
@@ -306,6 +315,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 .build();
     }
 
+    // onStart method: Set up Google map
     @Override
     public void onStart() {
         super.onStart();
@@ -313,6 +323,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
+    // onStop method: Prevent death while alarm is set
     @Override
     public void onStop() {
         if(MODE == 1) {
@@ -323,6 +334,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onStop();
     }
 
+    // onBackPressed method: Prevent maps death while alarm is set
     @Override
     public void onBackPressed() {
         if (MODE == 0) {
@@ -335,7 +347,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
-    // For updating map every X seconds
+    // For updating alarm every 2 seconds, seems like a reasonable amount of time
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -351,6 +363,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
     };
 
+    // setAlarm method: update MODE and set button visibility + begin handler for alarm
     public void setAlarm() {
         MODE = 1;
         handler.postDelayed(runnable, 2000);
@@ -359,6 +372,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmCancelButton.setVisibility(View.VISIBLE);
     }
 
+    // stopAlarm method: update MODE and set button visibility + stop handler for alarm
     public void stopAlarm() {
         MODE = 0;
         handler.removeCallbacks(runnable);
