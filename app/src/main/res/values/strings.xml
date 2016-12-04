@@ -19,7 +19,7 @@
 
     <!--shake awake sensitivity settings-->
     <string name="pref_title_shake_amount">Shake Awake Sensitivity</string>
-    <string name="shake_amount_default_value">Medium</string>
+    <string name="shake_amount_default_value">8</string>
     <string name="shake_amount_key">shake_amount</string>
     <string-array name="pref_shake_amount_titles">
         <item>Off</item>

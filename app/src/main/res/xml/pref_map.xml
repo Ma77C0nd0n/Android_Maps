@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.example.myfirstapp.NumberPickerPreference
-        android:key="map_distance"
-        android:title="Map Distance"
-        android:defaultValue="55" />
+    <EditTextPreference
+        android:inputType="number"
+        android:summary="Kill him pls"
+        android:defaultValue="500"
+        android:maxLength="4"
+        android:title="Help me with my friend's depression" />
     <!--<TextView-->
         <!--android:text="@string/select_distance"-->
         <!--android:layout_width="wrap_content"-->
