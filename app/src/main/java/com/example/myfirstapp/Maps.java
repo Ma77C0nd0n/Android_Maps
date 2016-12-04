@@ -3,6 +3,7 @@ package com.example.myfirstapp;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -10,6 +11,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -58,10 +60,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private GoogleApiClient client;
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton;
     private int MODE;
-
+    // TEMPORARY
+    private int distanceSetting = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -73,16 +77,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
         alarmSetButton = (Button) findViewById(R.id.set_location_button);
         alarmCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
-
         MODE = 0; // Set mode to 1 when alarm is set
 
         alarmSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setAlarm();
-                alarmSetButton.setVisibility(View.INVISIBLE);
-                alarmSaveButton.setVisibility(View.INVISIBLE);
-                alarmCancelButton.setVisibility(View.VISIBLE);
                 Toast t = Toast.makeText
                         (getApplicationContext(), "Alarm set!", Toast.LENGTH_SHORT);
                 t.show();
@@ -93,10 +93,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 stopAlarm();
-                alarmCancelButton.setVisibility(View.INVISIBLE);
-                Toast t = Toast.makeText
-                        (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
-                t.show();
             }
         });
 
@@ -178,6 +174,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        // Set view over Dublin
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932, -6.2603), 6.5f));
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -198,9 +196,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
-                marker.hideInfoWindow();
-                alarmSetButton.setVisibility(View.INVISIBLE);
-                alarmSaveButton.setVisibility(View.INVISIBLE);
+                if(MODE == 0) {
+                    marker.hideInfoWindow();
+                    alarmSetButton.setVisibility(View.INVISIBLE);
+                    alarmSaveButton.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
@@ -214,8 +214,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 currentMarker = marker;
-                Log.i("Last marker", "marker drag end");
-                getDistance(marker.getPosition());
             }
         });
 
@@ -223,10 +221,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                alarmSetButton.setVisibility(View.VISIBLE);
-                alarmSaveButton.setVisibility(View.VISIBLE);
-                currentMarker = marker;
-                getDistance(currentMarker.getPosition());
+                if(MODE == 0) {
+                    alarmSetButton.setVisibility(View.VISIBLE);
+                    alarmSaveButton.setVisibility(View.VISIBLE);
+                    currentMarker = marker;
+                    getDistance(currentMarker.getPosition());
+                }
                 return false;
             }
 
@@ -236,13 +236,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                mMap.clear();
-                currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
-                currentMarker.setDraggable(true);
-                currentMarker.showInfoWindow();
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(currentMarker.getPosition()));
-                Log.i("Last marker", "long click");
-                getDistance(currentMarker.getPosition());
+                if(MODE == 0) {
+                    mMap.clear();
+                    currentMarker = mMap.addMarker
+                            (new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
+                    currentMarker.setDraggable(true);
+                    currentMarker.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(currentMarker.getPosition()));
+                }
             }
         });
 
@@ -254,11 +255,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void onPlaceSelected(Place place) {
-                mMap.clear();
-                Log.i(TAG, "Place: " + place.getName());
-                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title((String) place.getName()));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
-                getDistance(place.getLatLng());
+                if(MODE == 0) {
+                    mMap.clear();
+                    Log.i(TAG, "Place: " + place.getName());
+                    mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title((String) place.getName()));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
+                }
             }
 
             @Override
@@ -267,11 +269,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-        // Set view over Dublin
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.34932, -6.2603), 6.5f));
     }
 
-    public void getDistance(LatLng end){
+    public int getDistance(LatLng end){
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -296,12 +296,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         Toast d = Toast.makeText
                 (getApplicationContext(), temp, Toast.LENGTH_SHORT);
         d.show();
+        return distance;
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Maps Page")
@@ -316,9 +313,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
@@ -326,20 +320,42 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+        stopAlarm();
     }
 
-    private void setAlarm() {
+    // For updating map every X seconds
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            // TODO: FIX ME WHAAAAAT
+            if(getDistance(currentMarker.getPosition()) <= distanceSetting) {
+                stopAlarm();
+                Intent i = new Intent(Maps.this, AlarmActivity.class);
+                setContentView(R.layout.activity_alarm);
+            }
+            else {
+                setAlarm();
+            }
+        }
+    };
+
+    public void setAlarm() {
         MODE = 1;
-        // TODO: Get distance to work and use alarm
+        handler.postDelayed(runnable, 2000);
+        alarmSetButton.setVisibility(View.INVISIBLE);
+        alarmSaveButton.setVisibility(View.INVISIBLE);
+        alarmCancelButton.setVisibility(View.VISIBLE);
     }
 
-    private void stopAlarm() {
+    public void stopAlarm() {
         MODE = 0;
-        // TODO: Stop distance form working
+        handler.removeCallbacks(runnable);
+        alarmCancelButton.setVisibility(View.INVISIBLE);
+        Toast t = Toast.makeText
+                (getApplicationContext(), "Alarm stopped!", Toast.LENGTH_SHORT);
+        t.show();
     }
 }
