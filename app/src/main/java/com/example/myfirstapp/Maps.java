@@ -54,11 +54,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton;
     private int MODE;
     // TEMPORARY
-    private int distanceSetting = 30;
+    private int distanceSetting = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        
         // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
         alarmSetButton = (Button) findViewById(R.id.set_location_button);
@@ -66,8 +69,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         MODE = 0; // Set mode to 1 when alarm is set
 
         // Google Maps API default code {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
