@@ -126,6 +126,11 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         // do nothing, accuracy is not changed
     }
 
+    @Override
+    public void onBackPressed() {
+        killAlarm();
+    }
+
     public void onPause() {
         super.onPause();
         if(shakeAmount!=0) {
