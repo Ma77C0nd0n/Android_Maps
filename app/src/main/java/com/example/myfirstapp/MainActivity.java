@@ -9,6 +9,10 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Main activity where permissions are set. Intents sent according to the button that is clicked.
+     * @param
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

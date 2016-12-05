@@ -178,7 +178,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         return read;
     }
 
-    // Method to get address from LatLng
+    // Method to get address from LatLng using a geocoder. If an error occurs (no address found), return the default value
+    // "Location".
     public String getAddressLine(LatLng point) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -306,12 +307,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        // Here the received intent is checked to see if it contains extras (i.e. saved location information to show on the map
+        // If it does, the location is presented as a marker with it's saved name as the marker's title.
         Intent intent = getIntent();
         if (intent.hasExtra(SavedLocations.LAT_KEY) && intent.hasExtra(SavedLocations.LNG_KEY) && intent.hasExtra(SavedLocations.NAME_KEY)) {
             double lat = intent.getExtras().getDouble(SavedLocations.LAT_KEY);
             double lng = intent.getExtras().getDouble(SavedLocations.LNG_KEY);
             String name = intent.getExtras().getString(SavedLocations.NAME_KEY);
-            Log.i("name", "" + name);
             LatLng point = new LatLng(lat, lng);
             currentMarker = mMap.addMarker
                     (new MarkerOptions().position(point).title(name));

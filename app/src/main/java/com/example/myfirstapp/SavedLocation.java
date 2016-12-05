@@ -7,8 +7,10 @@ import java.util.Objects;
 
 /**
  * Created by evin_ on 27/11/2016.
+ *
+ * This class models a saved location with fields for a latitude and longitude taken from a LatLng, and then a string name whose
+ * default is an address string retrieved from a geocoder.
  */
-
 public class SavedLocation implements Serializable {
     String name;
     double lat, lng;
@@ -29,10 +31,6 @@ public class SavedLocation implements Serializable {
             return ((lat == ((SavedLocation) s).lat) && (lng == ((SavedLocation) s).lng));
         }
         return false;
-    }
-
-    public double getLat() {
-        return lat;
     }
 
     @Override

@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +33,17 @@ import java.util.ArrayList;
 /**
  * Created by rucha on 13-Nov-16.
  */
-
+/**
+ * In this activity, a file containing all saved locations is read and its contents extracted to populate a listview, with a popup
+ * menu for each entry where the user can delete a location, edit a lcoation's name, or show the location on the map to set an
+ * alarm with it without having to search for the address. I created a class to model a saved location, which holds values for its
+ * latitude and longitude, and a string name (which is the field a user can edit). I built a custom array adapter so the listview
+ * could be populated by my custom objects.
+ *
+ * Threading is used to read data from the file, and the activity implements on click listeners for the different buttons
+ * available for each entry in the listview. When the user is leaving the activity, the file's contents will be overwritten
+ * with the new, changed data (where some locations could have been removed / had their names changed).
+ */
 public class SavedLocations extends AppCompatActivity {
 
     private ArrayList<SavedLocation> listLocations = new ArrayList<SavedLocation>();
@@ -47,7 +56,8 @@ public class SavedLocations extends AppCompatActivity {
     private LocationsAdapter adapter;
 
     /**
-     * Called when the activity is first created.
+     * onCreate will initialise and set the array adapter to populate the listview. The data is read on a seperate thread.
+     * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,25 @@ public class SavedLocations extends AppCompatActivity {
         t.start();
     }
 
+    // Handler where the thread to read the data happens
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            try {
+                listLocations = readData();
+            } catch (IOException e) {
+                listLocations = new ArrayList<SavedLocation>();
+            }
+            adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listLocations);
+            listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+    /**
+     * When the activity is stopping (either because another activity is starting, or the back button is pressed), the data in the
+     * file will be updated.
+     * @param
+     */
     @Override
     protected void onStop() {
         try {
@@ -79,6 +108,10 @@ public class SavedLocations extends AppCompatActivity {
         super.onStop();
     }
 
+    /**
+     * When the activity is resumed after having been stopped, the data will be read again to ensure it doesn't miss any updates
+     * @param
+     */
     @Override
     protected void onResume() {
         try {
@@ -92,19 +125,11 @@ public class SavedLocations extends AppCompatActivity {
         super.onResume();
     }
 
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            try {
-                listLocations = readData();
-            } catch (IOException e) {
-                listLocations = new ArrayList<SavedLocation>();
-            }
-            adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listLocations);
-            listView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        }
-    };
-
+    /**
+     * Here, the app's file directory is searched for a file with the same name as the string stored in this class.
+     * If it exists, the array list containing the serializable SavedLocation objects is retrieved.
+     * @param
+     */
     private ArrayList<SavedLocation> readData() throws IOException {
         ArrayList<SavedLocation> read = new ArrayList<SavedLocation>();
         ObjectInputStream ois = null;
@@ -124,6 +149,13 @@ public class SavedLocations extends AppCompatActivity {
         return read;
     }
 
+    /**
+     * Custom array adapter to ensure my custom list contents (SavedLocation objects) and the custom row entry layout can be adapted
+     * for the listview. Class contains onClickListeners for the various buttons presented with the popup menu. A viewholder is also
+     * used to recycle rows to improve the listviews performance: as rolls scroll out of view, they are hot swapped out so the app doesn't
+     * keep every row held at once, but only the amount that will fit in the screen.
+     * @param
+     */
     public class LocationsAdapter extends ArrayAdapter<SavedLocation> {
 
         private ArrayList<SavedLocation> list;
@@ -151,6 +183,8 @@ public class SavedLocations extends AppCompatActivity {
             SavedLocation l = list.get(position);
             if (l != null) {
                 viewHolder.locationName.setText(l.toString());
+                // Click listener for the button that activates the popdown menu. A switch statement is used to see which button
+                // is pressed in this menu.
                 viewHolder.popdown.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -161,6 +195,7 @@ public class SavedLocations extends AppCompatActivity {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
+                                    // User wants to edit location name. Alert Dialog is created to allow user input.
                                     case R.id.location_edit:
                                         final EditText text = new EditText(context);
                                         text.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -183,11 +218,14 @@ public class SavedLocations extends AppCompatActivity {
                                                     }
                                                 }).show();
                                         return true;
+                                    // Removing location from list.
                                     case R.id.location_remove:
                                         list.remove(position);
                                         adapter.notifyDataSetChanged();
                                         Toast.makeText(getApplicationContext(), "Removed location!", Toast.LENGTH_SHORT).show();
                                         return true;
+                                    // User indicates they want to open location on map. Location info is stored in an intent,
+                                    // which is used to start the next activity.
                                     case R.id.location_set:
                                         Intent intent = new Intent(SavedLocations.this, Maps.class);
                                         SavedLocation s = list.get(position);
