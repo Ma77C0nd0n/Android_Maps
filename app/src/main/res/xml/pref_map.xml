@@ -4,7 +4,7 @@
     <EditTextPreference
         android:inputType="number"
         android:summary="@string/pref_summary_distance"
-        android:defaultValue="200"
+        android:defaultValue="500"
         android:maxLength="4"
         android:title="@string/pref_title_distance"
         android:key="@string/distance_key"/>
