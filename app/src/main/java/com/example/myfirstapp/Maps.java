@@ -76,8 +76,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        distanceSetting = Integer.parseInt(prefs.getString(MAP_DISTANCE, DEFAULT_DISTANCE));
+        updateDistance();
 
         // Set up buttons and alarm mode
         alarmSaveButton = (Button) findViewById(R.id.save_location_button);
@@ -364,6 +363,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onStart();
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+        updateDistance();
     }
 
     // onStop method: Prevent death while alarm is set
@@ -447,5 +447,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 .radius(distanceSetting).fillColor(R.color.colorAccent).strokeWidth(3)
                 .strokeColor(R.color.colorWhite);
         currentCircle = mMap.addCircle(circleOptions);
+    }
+
+    // Update the distance setting
+    private void updateDistance() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        distanceSetting = Integer.parseInt(prefs.getString(MAP_DISTANCE, DEFAULT_DISTANCE));
     }
 }
