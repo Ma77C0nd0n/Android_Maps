@@ -342,8 +342,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         Location dest = new Location("");
         dest.setLatitude(end.latitude); // your coords of course
         dest.setLongitude(end.longitude);
-        int distance = (int) startLocation.distanceTo(dest);
-        return distance;
+        return (int) startLocation.distanceTo(dest);
     }
 
     // Default method from Google Maps API

@@ -37,7 +37,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private int shakeAmount;
     private String alarmTone;
     private boolean vibrateOn;
-    //TODO: Add option to disable shake awake from settings menu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
