@@ -69,7 +69,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private int MODE;
 
     /**
-     *
+     * onCreate will assign all variables to values before the map is initialised
      * @param savedInstanceState
      */
     @Override
