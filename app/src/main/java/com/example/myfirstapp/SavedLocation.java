@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 
 public class SavedLocation implements Serializable {
-    private String name;
+    String name;
     double lat, lng;
 
     SavedLocation(LatLng point, String name) {

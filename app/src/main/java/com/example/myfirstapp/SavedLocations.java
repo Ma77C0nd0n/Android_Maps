@@ -48,7 +48,9 @@ public class SavedLocations extends AppCompatActivity {
     private ListView listView;
     private Runnable retrieveLocations;
     public static final String LOCATIONS_FILENAME = "locations";
-    public static final String LAT_LNG_KEY = "latlng";
+    public static final String LAT_KEY = "lat";
+    public static final String LNG_KEY = "lng";
+    public static final String NAME_KEY = "name";
     private LocationsAdapter adapter;
 
     /**
@@ -90,6 +92,19 @@ public class SavedLocations extends AppCompatActivity {
     protected void onPause() {
         Log.d("Flow", "pause");
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            listLocations = readData();
+        } catch (IOException e) {
+            listLocations = new ArrayList<SavedLocation>();
+        }
+        adapter = new LocationsAdapter(SavedLocations.this, R.layout.locations_row, listLocations);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        super.onResume();
     }
 
     @Override
@@ -207,13 +222,12 @@ public class SavedLocations extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(),"Removed location!" + position, Toast.LENGTH_SHORT).show();
                                         return true;
                                     case R.id.location_set:
-//                                        Intent intent = new Intent(SavedLocations.this, Maps.class);
-//                                        SavedLocation s = list.get(position);
-//                                        LatLng point = new LatLng(s.lat, s.lng);
-//                                        Bundle bundle = new Bundle();
-//                                        bundle.putParcelable(LAT_LNG_KEY, point);
-//                                        startActivity(intent);
-                                        Toast.makeText(getApplicationContext(),"sending intent", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(SavedLocations.this, Maps.class);
+                                        SavedLocation s = list.get(position);
+                                        intent.putExtra(LAT_KEY, s.lat);
+                                        intent.putExtra(LNG_KEY, s.lng);
+                                        intent.putExtra(NAME_KEY, s.name);
+                                        startActivity(intent);
                                         return true;
                                 }
                                 return false;

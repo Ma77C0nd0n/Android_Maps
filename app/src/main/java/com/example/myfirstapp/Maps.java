@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,8 +68,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        Log.i("why", "fuck");
         setContentView(R.layout.activity_maps);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         distanceSetting = Integer.parseInt(prefs.getString(MAP_DISTANCE, DEFAULT_DISTANCE));
@@ -82,11 +83,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         // Google Maps API default code {
 
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         // } end Google Maps API default code
+
 
         // Set click listener for SET ALARM button
         alarmSetButton.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +221,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             // Hide the text above marker, hide set and save alarm buttons
             @Override
             public void onMarkerDragStart(Marker marker) {
-                if(MODE == 0) {
+                if (MODE == 0) {
                     marker.hideInfoWindow();
                     currentCircle.remove();
                     alarmSetButton.setVisibility(View.INVISIBLE);
@@ -247,7 +250,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(MODE == 0) {
+                if (MODE == 0) {
                     alarmSetButton.setVisibility(View.VISIBLE);
                     alarmSaveButton.setVisibility(View.VISIBLE);
                     currentMarker = marker;
@@ -260,7 +263,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                if(MODE == 0) {
+                if (MODE == 0) {
                     mMap.clear();
                     currentMarker = mMap.addMarker
                             (new MarkerOptions().position(latLng).title(getAddressLine(latLng)));
@@ -284,12 +287,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             // Location has been selected, place marker on map and zoom to location
             @Override
             public void onPlaceSelected(Place place) {
-                if(MODE == 0) {
+                if (MODE == 0) {
                     mMap.clear();
                     Log.i(TAG, "Place: " + place.getName());
                     currentMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
                             .title((String) place.getName())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small)));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small)));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
                     drawCircle();
                 }
@@ -301,10 +304,24 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        Intent intent = getIntent();
+        if (intent.hasExtra(SavedLocations.LAT_KEY) && intent.hasExtra(SavedLocations.LNG_KEY) && intent.hasExtra(SavedLocations.NAME_KEY)) {
+            double lat = intent.getExtras().getDouble(SavedLocations.LAT_KEY);
+            double lng = intent.getExtras().getDouble(SavedLocations.LNG_KEY);
+            String name = intent.getExtras().getString(SavedLocations.NAME_KEY);
+            Log.i("name", "" + name);
+            LatLng point = new LatLng(lat, lng);
+            currentMarker = mMap.addMarker
+                    (new MarkerOptions().position(point).title(name));
+            currentMarker.showInfoWindow();
+            currentMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentMarker.getPosition(), 12.5f));
+            drawCircle();
+        }
     }
 
     // Method to get distance from current location to marker on map
-    public int getDistance(LatLng end){
+    public int getDistance(LatLng end) {
 
         // Check location is enabled
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -326,7 +343,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         dest.setLatitude(end.latitude); // your coords of course
         dest.setLongitude(end.longitude);
         int distance = (int) startLocation.distanceTo(dest);
-        String temp = Integer.toString(distance);
         return distance;
     }
 
@@ -353,7 +369,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     // onStop method: Prevent death while alarm is set
     @Override
     public void onStop() {
-        if(MODE == 1) {
+        if (MODE == 1) {
             Toast t = Toast.makeText
                     (getApplicationContext(), "Alarm still running in background!", Toast.LENGTH_LONG);
             t.show();
@@ -379,12 +395,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if(getDistance(currentMarker.getPosition()) <= distanceSetting) {
+            if (getDistance(currentMarker.getPosition()) <= distanceSetting) {
                 stopAlarm();
                 Intent i = new Intent(Maps.this, AlarmActivity.class);
                 startActivity(i);
-            }
-            else {
+            } else {
                 setAlarm();
             }
         }
