@@ -13,7 +13,7 @@
         android:key="@string/shake_amount_key" />
 
     <RingtonePreference
-        android:defaultValue="content://settings/system/notification_sound"
+        android:defaultValue=""
         android:key="@string/alarm_tone_key"
         android:ringtoneType="alarm"
         android:title="@string/pref_title_alarmtone" />

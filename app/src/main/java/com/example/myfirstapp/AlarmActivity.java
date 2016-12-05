@@ -63,10 +63,12 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
                 t.show();
             }
         }
+        if(alarmTone.matches(""))
+            this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
-        this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        else
+            this.notification = Uri.parse(alarmTone);
 
-        this.notification = Uri.parse(alarmTone);
         this.ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         if (!is_playing) {
@@ -87,7 +89,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         shakeAmount = Integer.parseInt(prefs.getString(SHAKE_KEY, DEFAULT_SHAKE_AMOUNT));
         vibrateOn = prefs.getBoolean(VIBRATE_KEY, vibrateOn);
-        alarmTone = prefs.getString(ALARM_TONE, "40");
+        alarmTone = prefs.getString(ALARM_TONE, "");
     }
 
     @Override
