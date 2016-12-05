@@ -76,6 +76,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // Update distance setting
         updateDistance();
 
         // Set up buttons and alarm mode
@@ -363,6 +365,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onStart();
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+        // update distance setting as this may have been an issue during testing
         updateDistance();
     }
 
