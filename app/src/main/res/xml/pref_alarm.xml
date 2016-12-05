@@ -12,11 +12,10 @@
         android:entryValues="@array/pref_shake_amount_values"
         android:key="@string/shake_amount_key" />
 
-    <!--<RingtonePreference-->
-        <!--android:defaultValue="content://settings/system/notification_sound"-->
-        <!--android:dependency="notifications_new_message"-->
-        <!--android:key="notifications_new_message_ringtone"-->
-        <!--android:ringtoneType="alarm"-->
-        <!--android:title="@string/pref_title_ringtone" />-->
+    <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
+        android:key="@string/alarm_tone_key"
+        android:ringtoneType="alarm"
+        android:title="@string/pref_title_alarmtone" />
 
 </PreferenceScreen>

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import static com.example.myfirstapp.Settings.ALARM_TONE;
 import static com.example.myfirstapp.Settings.SHAKE_KEY;
 import static com.example.myfirstapp.Settings.VIBRATE_KEY;
 
@@ -34,6 +35,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private long lastShake = 0;
     private int shakeNumber = 2;
     private int shakeAmount;
+    private String alarmTone;
     private boolean vibrateOn;
     //TODO: Add option to disable shake awake from settings menu
 
@@ -64,6 +66,8 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
 
         this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
+        this.notification = Uri.parse(alarmTone);
         this.ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         if (!is_playing) {
@@ -84,6 +88,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         shakeAmount = Integer.parseInt(prefs.getString(SHAKE_KEY, DEFAULT_SHAKE_AMOUNT));
         vibrateOn = prefs.getBoolean(VIBRATE_KEY, vibrateOn);
+        alarmTone = prefs.getString(ALARM_TONE, "40");
     }
 
     @Override

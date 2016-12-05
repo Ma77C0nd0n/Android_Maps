@@ -34,18 +34,14 @@
         <item>8</item>
     </string-array>
 
+    <!-- alarm tone settings -->
+    <string name="alarm_tone_key">alarm_tone</string>
+    <string name="pref_title_alarmtone">Alarm Tone</string>
+
     <!--map distance settings-->
     <string name="pref_title_distance">Alarm Distance (in meters)</string>
     <string name="pref_summary_distance">Distance from point before alarm rings\nRecommended minimum distance 50 meters</string>
     <string name="select_distance">Select Distance</string>
     <string name="distance_key">map_distance</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
 
 </resources>
