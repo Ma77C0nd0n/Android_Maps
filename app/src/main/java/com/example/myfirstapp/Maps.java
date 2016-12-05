@@ -34,6 +34,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -55,6 +57,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
+    private Circle currentCircle = null;
     private GoogleApiClient client;
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton, spotifyButton;
     private int MODE;
@@ -217,6 +220,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             public void onMarkerDragStart(Marker marker) {
                 if(MODE == 0) {
                     marker.hideInfoWindow();
+                    currentCircle.remove();
                     alarmSetButton.setVisibility(View.INVISIBLE);
                     alarmSaveButton.setVisibility(View.INVISIBLE);
                 }
@@ -235,6 +239,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 marker.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 currentMarker = marker;
+                drawCircle();
             }
         });
 
@@ -263,6 +268,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     currentMarker.showInfoWindow();
                     currentMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(currentMarker.getPosition()));
+                    drawCircle();
                 }
             }
         });
@@ -285,6 +291,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                             .title((String) place.getName())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_small)));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16.5f));
+                    drawCircle();
                 }
             }
 
@@ -415,5 +422,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             intent.setData(Uri.parse("market://details?id=com.spotify.music"));
             startActivity(intent);
         }
+    }
+
+    // Draw circle around marker
+    private void drawCircle() {
+        CircleOptions circleOptions = new CircleOptions().center(currentMarker.getPosition())
+                .radius(distanceSetting).fillColor(R.color.colorAccent).strokeWidth(3)
+                .strokeColor(R.color.colorWhite);
+        currentCircle = mMap.addCircle(circleOptions);
     }
 }
