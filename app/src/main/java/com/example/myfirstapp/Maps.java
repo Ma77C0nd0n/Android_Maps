@@ -54,6 +54,9 @@ import java.util.Locale;
 
 import static com.example.myfirstapp.Settings.MAP_DISTANCE;
 
+/**
+ * This is the Maps activity, which contains all the methods required to run the map fragment
+ */
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;

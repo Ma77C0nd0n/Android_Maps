@@ -21,7 +21,9 @@ import static com.example.myfirstapp.Settings.ALARM_TONE;
 import static com.example.myfirstapp.Settings.SHAKE_KEY;
 import static com.example.myfirstapp.Settings.VIBRATE_KEY;
 
-
+/**
+ * This is the alarm activity, which rings an alarm when the user enters marker's radius
+ */
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
 
     private Uri notification;
@@ -40,9 +42,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("ALARM STARTED");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+        // Updates alarm settings to match those from settings menu
         updatePreferences();
 
         // Force window to appear over lock screen
@@ -63,11 +66,14 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
                 t.show();
             }
         }
+
+        // If alarm tone not set, use standard alarm tone
         if (alarmTone.matches(""))
             this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         else
             this.notification = Uri.parse(alarmTone);
 
+        // Ring alarm + Vibrate if setting dictates
         this.ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         if (!is_playing) {
@@ -91,6 +97,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         alarmTone = prefs.getString(ALARM_TONE, "");
     }
 
+    /**
+     * Override the onSensorChanged method to count shakes
+     * @param event
+     */
     @Override
     public final void onSensorChanged(SensorEvent event) {
         long current_time = System.currentTimeMillis();
@@ -116,15 +126,25 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
     }
 
+    /**
+     * Override required despite method not being used
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // do nothing, accuracy is not changed
     }
 
+    /**
+     * Prevent user from backing out of alarm without killing it
+     */
     @Override
     public void onBackPressed() {
         killAlarm();
     }
+
+    /**
+     * Unregister listener for shaking, if shake awake is enabled
+     */
     public void onPause() {
         super.onPause();
         if (shakeAmount != 0) {
@@ -132,6 +152,9 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
     }
 
+    /**
+     * Register listener for shaking, if shake is enabled
+     */
     public void onResume() {
         super.onResume();
         if (shakeAmount != 0) {
@@ -139,6 +162,9 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
     }
 
+    /**
+     * Method to stop the alarm from ringing
+     */
     public void killAlarm() {
         if (shakeAmount != 0) {
             sensorManager.unregisterListener(this);
@@ -149,6 +175,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         this.finish();
     }
 
+    /**
+     * Method to stop alarm from ringing, activated by UI
+     * @param v
+     */
     public void killAlarm(View v) {
         if (shakeAmount != 0) {
             sensorManager.unregisterListener(this);
