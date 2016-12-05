@@ -68,8 +68,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
 
         // If alarm tone not set, use standard alarm tone
-        if (alarmTone.matches(""))
+        if (alarmTone.matches("default"))
             this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        else if (alarmTone.matches(""))
+            this.notification = Uri.parse("");
         else
             this.notification = Uri.parse(alarmTone);
 
