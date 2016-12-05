@@ -184,8 +184,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             if (results != null) {
                 return results.get(0).getAddressLine(0);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return "Location";
         }
         return "Location";
     }
