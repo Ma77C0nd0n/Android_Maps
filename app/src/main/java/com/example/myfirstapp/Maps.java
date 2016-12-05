@@ -393,6 +393,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     // setAlarm method: update MODE and set button visibility + begin handler for alarm
     public void setAlarm() {
         MODE = 1;
+        currentMarker.setDraggable(false);
         handler.postDelayed(runnable, 2000);
         alarmSetButton.setVisibility(View.INVISIBLE);
         alarmSaveButton.setVisibility(View.INVISIBLE);
@@ -403,6 +404,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     // stopAlarm method: update MODE and set button visibility + stop handler for alarm
     public void stopAlarm() {
         MODE = 0;
+        currentMarker.setDraggable(true);
         handler.removeCallbacks(runnable);
         alarmCancelButton.setVisibility(View.INVISIBLE);
         spotifyButton.setVisibility(View.INVISIBLE);
