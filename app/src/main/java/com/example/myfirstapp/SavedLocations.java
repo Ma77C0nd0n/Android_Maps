@@ -1,14 +1,11 @@
 package com.example.myfirstapp;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -18,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,13 +22,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -74,7 +67,6 @@ public class SavedLocations extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Log.d("Flow", "stop");
         try {
             File file = new File(getFilesDir(), LOCATIONS_FILENAME);
             FileOutputStream fos = new FileOutputStream(file);
@@ -84,14 +76,7 @@ public class SavedLocations extends AppCompatActivity {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        Log.d("Leaving activity", "list size is " + String.valueOf(listLocations.size()));
         super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d("Flow", "pause");
-        super.onPause();
     }
 
     @Override
@@ -105,12 +90,6 @@ public class SavedLocations extends AppCompatActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d("Flow", "destroy");
-        super.onDestroy();
     }
 
     private Handler handler = new Handler() {
@@ -145,17 +124,9 @@ public class SavedLocations extends AppCompatActivity {
         return read;
     }
 
-    public void printList(){
-        for (SavedLocation s: listLocations){
-            Log.d("List:", s.toString());
-        }
-
-    }
-
     public class LocationsAdapter extends ArrayAdapter<SavedLocation> {
 
-        ArrayList<SavedLocation> list;
-        private TextView text;
+        private ArrayList<SavedLocation> list;
         private final Context context;
 
         public LocationsAdapter(Context context, int textViewResourceId, ArrayList<SavedLocation> objects) {
@@ -177,24 +148,20 @@ public class SavedLocations extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            SavedLocation l = (SavedLocation) list.get(position);
+            SavedLocation l = list.get(position);
             if (l != null) {
                 viewHolder.locationName.setText(l.toString());
                 viewHolder.popdown.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        list.remove(position);
-//                        adapter.notifyDataSetChanged();
                         PopupMenu popup = new PopupMenu(context, v);
                         popup.getMenuInflater().inflate(R.menu.locations_popdown, popup.getMenu());
                         popup.show();
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()){
+                                switch (item.getItemId()) {
                                     case R.id.location_edit:
-//                                        printList();
-//                                        list.get(position).setName("Test change location name");
                                         final EditText text = new EditText(context);
                                         text.setInputType(InputType.TYPE_CLASS_TEXT);
                                         new AlertDialog.Builder(context)
@@ -206,7 +173,7 @@ public class SavedLocations extends AppCompatActivity {
                                                         String name = text.getText().toString();
                                                         list.get(position).setName(name);
                                                         adapter.notifyDataSetChanged();
-                                                        Toast.makeText(getApplicationContext(),"Name changed!", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(), "Name changed!", Toast.LENGTH_SHORT).show();
                                                     }
                                                 })
                                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -219,7 +186,7 @@ public class SavedLocations extends AppCompatActivity {
                                     case R.id.location_remove:
                                         list.remove(position);
                                         adapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(),"Removed location!" + position, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Removed location!", Toast.LENGTH_SHORT).show();
                                         return true;
                                     case R.id.location_set:
                                         Intent intent = new Intent(SavedLocations.this, Maps.class);

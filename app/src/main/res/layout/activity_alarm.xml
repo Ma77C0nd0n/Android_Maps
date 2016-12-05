@@ -33,5 +33,4 @@
         android:adjustViewBounds="true"
         android:alpha="20"
         android:cropToPadding="false" />
-
 </LinearLayout>

@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void onButtonClick(View v) {
         Intent i;
         if (v.getId() == R.id.Bsettings) {
@@ -39,6 +38,4 @@ public class MainActivity extends AppCompatActivity {
         }
         startActivity(i);
     }
-
-
 }

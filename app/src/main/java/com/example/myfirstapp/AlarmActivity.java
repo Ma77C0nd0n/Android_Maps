@@ -24,17 +24,17 @@ import static com.example.myfirstapp.Settings.VIBRATE_KEY;
 
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
 
-    Uri notification;
+    private Uri notification;
     private static boolean is_playing = false;
     private Ringtone ringtone;
     private Vibrator vibrator;
     protected SensorManager sensorManager;
     protected Sensor shakeSensor;
-    private static final int SHAKE_DELAY_MS = 100;
-    private static final String DEFAULT_SHAKE_AMOUNT = "7";
     private long lastShake = 0;
     private int shakeNumber = 2;
     private int shakeAmount;
+    private static final int SHAKE_DELAY_MS = 100;
+    private static final String DEFAULT_SHAKE_AMOUNT = "7";
     private String alarmTone;
     private boolean vibrateOn;
 
@@ -52,7 +52,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         // Set up Accelerometer if shake awake is active
-        if(shakeAmount!=0) {
+        if (shakeAmount != 0) {
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
                 shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -63,9 +63,8 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
                 t.show();
             }
         }
-        if(alarmTone.matches(""))
+        if (alarmTone.matches(""))
             this.notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
         else
             this.notification = Uri.parse(alarmTone);
 
@@ -114,12 +113,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             if (shakeNumber == 0) {
                 killAlarm();
             }
-
         }
-        // For debug
-//        System.out.println("Force: "+shake_force+" | Shakes left: "+shakeNumber
-//                +" | Time: "+current_time+ " | Last time: "+lastShake
-//                +" | Diff: "+(current_time-lastShake));
     }
 
     @Override
@@ -131,10 +125,9 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     public void onBackPressed() {
         killAlarm();
     }
-
     public void onPause() {
         super.onPause();
-        if(shakeAmount!=0) {
+        if (shakeAmount != 0) {
             sensorManager.unregisterListener(this);
         }
     }
@@ -147,7 +140,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void killAlarm() {
-        if(shakeAmount!=0) {
+        if (shakeAmount != 0) {
             sensorManager.unregisterListener(this);
         }
         this.ringtone.stop();
@@ -157,7 +150,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void killAlarm(View v) {
-        if(shakeAmount!=0) {
+        if (shakeAmount != 0) {
             sensorManager.unregisterListener(this);
         }
         this.ringtone.stop();
@@ -165,5 +158,4 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         is_playing = false;
         this.finish();
     }
-
 }

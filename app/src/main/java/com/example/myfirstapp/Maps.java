@@ -61,15 +61,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private Circle currentCircle = null;
     private GoogleApiClient client;
     private Button alarmSetButton, alarmSaveButton, alarmCancelButton, spotifyButton;
-    private int MODE;
-    // TEMPORARY
     private static final String DEFAULT_DISTANCE = "200";
     private int distanceSetting;
+    private int MODE;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("why", "fuck");
         setContentView(R.layout.activity_maps);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         distanceSetting = Integer.parseInt(prefs.getString(MAP_DISTANCE, DEFAULT_DISTANCE));
@@ -82,14 +84,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         MODE = 0; // Set mode to 1 when alarm is set
 
         // Google Maps API default code {
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         // } end Google Maps API default code
-
 
         // Set click listener for SET ALARM button
         alarmSetButton.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +150,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                             (getApplicationContext(), "No location selected!", Toast.LENGTH_LONG);
                     t.show();
                 }
-
             }
         });
     }

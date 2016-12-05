@@ -24,6 +24,4 @@
         android:background="@android:color/holo_blue_bright"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-
 </RelativeLayout>
